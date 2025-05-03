@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Finance Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Finance Dashboard</h1>
+    <div>
+        <h3>Cash Management</h3>
+        <p>Cash: <span id="cash-amount">Loading...</span> €</p>
+        <input type="number" id="amount-input" placeholder="Enter amount"/>
+        <button onclick="addCash()">Add</button>
+        <button onclick="removeCash()">Remove</button>
+    </div>
+    <div>
+        <h3>Add incoming cash</h3>
+        <input type="date" id="incoming-date" placeholder="Date" />
+        <input type="number" id="incoming-amount" placeholder="Amount" />
+        <button onclick="addIncomingCash()">Add incoming</button>
+        <ul id="incoming-cash-list"></ul>
+    </div>
+    <div>
+        <h3>Spending limit</h3>
+        <input type="date" id="limit-date" placeholder="Date" /> 
+        <p>Daily limit: <span id="spending-limit">Loading...</span> €</p>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
