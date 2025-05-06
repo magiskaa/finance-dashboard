@@ -1,10 +1,33 @@
+function fetchTotal() {
+    fetch('http://localhost:5000/total')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('total-amount').innerText = data.total.toFixed(2) + '€';
+        });
+    fetchCash();
+    fetchCrypto();
+    updateBalance();
+}
+
 function fetchCash() {
     fetch('http://localhost:5000/cash')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('cash-amount').innerText = data.cash;
+            document.getElementById('cash-amount').innerText = data.cash.toFixed(2) + '€';
             renderIncomingCashList(data.incoming_cash || []);
         });
+}
+
+function fetchCrypto() {
+    fetch('http://localhost:5000/crypto')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('crypto-amount').innerText = data.crypto.toFixed(2) + '€';
+        });
+}
+
+function updateBalance() {
+    pass
 }
 
 function renderIncomingCashList(incomingCash) {
@@ -45,9 +68,25 @@ function changeCash(amount) {
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById('cash-amount').innerText = data.cash
+        document.getElementById('cash-amount').innerText = data.cash.toFixed(2) + '€';
+        document.getElementById('total-amount').innerText = data.total.toFixed(2) + '€';
     });
 }
+
+function resetBalance() {
+    fetch('http://localhost:5000/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reset: true })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('total-amount').innerText = data.total.toFixed(2) + '€';
+        document.getElementById('cash-amount').innerText = data.cash.toFixed(2) + '€';
+        document.getElementById('spending-limit').innerText = 'Loading...';
+        renderIncomingCashList(data.incoming_cash || []);
+    });
+} 
 
 function addIncomingCash() {
     const amount = parseFloat(document.getElementById('incoming-amount').value)
@@ -86,4 +125,4 @@ function calculateSpendingLimit() {
 
 document.getElementById('limit-date').addEventListener('change', calculateSpendingLimit);
 
-window.onload = fetchCash
+window.onload = fetchTotal;

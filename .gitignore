@@ -29,3 +29,4 @@ node_modules/
 # Misc
 *.bak
 *.swp
+data/
