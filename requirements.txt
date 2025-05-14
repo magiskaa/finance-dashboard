@@ -1,3 +1,5 @@
 flask==3.1.0
 flask-cors==5.0.1
 pybit==5.10.1
+pymexc==1.2.4
+binance-futures-connector==4.1.0
