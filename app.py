@@ -65,34 +65,46 @@ def crypto():
     save_data()
     return jsonify(crypto=crypto_total)
 
-
 @app.route('/cash', methods=['POST'])
 def update_cash():
-    global cash_balance, crypto_total
+    global cash_balance, crypto_total, incoming_cash, spending_limit
     data = request.get_json()
     amount = data.get('amount', 0)
     cash_balance += amount
+    
+    for i in incoming_cash:
+        if i["date"] == date.today().strftime('%d.%m.%Y'):
+            cash_balance += i["amount"]
+            incoming_cash.remove(i)
+    
     if cash_balance < 0:
         cash_balance = 0
+    
+    crypto_total = float(bybit_client.get_wallet_balance(accountType='UNIFIED', currency='USDT')['result']['list'][0]['totalEquity'])
+    crypto_total += float(mexc_client.asset(currency='USDT')['data']['equity'])
+    balance = binance_client.balance()
+    for i in balance:
+        if i['asset'] == 'BNFCR':
+            crypto_total += float(i['balance'])
+    
     save_data()    
-    return jsonify(cash=cash_balance, total=cash_balance + crypto_total)
+    return jsonify(cash=cash_balance, crypto=crypto_total, total=cash_balance + crypto_total, incoming_cash=incoming_cash, spending_limit=spending_limit)
 
 @app.route('/reset', methods=['POST'])
 def reset_cash():
     global cash_balance, incoming_cash, spending_limit, crypto_total
     cash_balance = 0
     total_cash = crypto_total
-    incoming_cash = []
     spending_limit = 0
     save_data()
-    return jsonify(total=total_cash, cash=cash_balance, incoming_cash=incoming_cash, spending_limit=spending_limit)
+    return jsonify(total=total_cash, cash=cash_balance, spending_limit=spending_limit)
 
 @app.route('/incoming_cash', methods=['POST'])
 def add_incoming_cash():
     global incoming_cash
     data = request.get_json()
     amount = data.get('amount', 0)
-    date_received = data.get('date', date.today().isoformat())
+    date_received = data.get('date', date.today().strftime('%d.%m.%Y'))
     incoming_cash.append({
         'amount': amount,
         'date': date_received

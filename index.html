@@ -7,30 +7,41 @@
 </head>
 <body>
     <h1>Finance Dashboard</h1>
-    <div id="balance-section">
-        <h2>Account Balance</h2>
-        <p>Total: <span id="total-amount">Loading...</span></p>
-        <p>Cash: <span id="cash-amount">Loading...</span></p>
-        <p>Crypto: <span id="crypto-amount">Loading...</span></p>
-        <button onclick="updateBalance()">Update</button>
-    </div>
-    <div id="managament-section">
-        <h2>Cash Management</h2>
-        <input type="number" id="amount-input" placeholder="Enter amount"/>
-        <button onclick="addCash()">Add</button>
-        <button onclick="removeCash()">Remove</button>
-        <button onclick="resetBalance()">Reset Balance</button>
-        <button onclick="addTransaction()">Add Transaction</button>
+    <div id="main-container">
+        <div id="left-column">
+            <div id="balance-section">
+                <h2>Account Balance</h2>
+                <p>Total: <span id="total-amount">Loading...</span></p>
+                <p>Cash: <span id="cash-amount">Loading...</span></p>
+                <p>Crypto: <span id="crypto-amount">Loading...</span></p>
+                <button onclick="updateBalance()">Update</button>
+                <p>Incoming cash:</p>
+                <ul id="incoming-cash-list"></ul>
+            </div>
+            <div id="management-section">
+                <h2>Cash Management</h2>
+                <input type="number" id="amount-input" placeholder="Enter amount"/>
+                <button onclick="addCash()">Add</button>
+                <button onclick="removeCash()">Remove</button>
+                <button onclick="resetBalance()">Reset Balance</button>
+                <button onclick="addTransaction()">Add Transaction</button>
 
-        <h3>Add incoming cash</h3>
-        <input type="date" id="incoming-date" placeholder="Date" />
-        <input type="number" id="incoming-amount" placeholder="Amount" />
-        <button onclick="addIncomingCash()">Add incoming</button>
-        <ul id="incoming-cash-list"></ul>
+                <h3>Add incoming cash</h3>
+                <input type="date" id="incoming-date" placeholder="Date" />
+                <input type="number" id="incoming-amount" placeholder="Amount" />
+                <button onclick="addIncomingCash()">Add incoming</button>
 
-        <h3>Spending limit</h3>
-        <input type="date" id="limit-date" placeholder="Date" /> 
-        <p>Daily limit: <span id="spending-limit">Loading...</span></p>
+                <h3>Spending limit</h3>
+                <input type="date" id="limit-date" placeholder="Date" /> 
+                <p>Daily limit: <span id="spending-limit">Loading...</span></p>
+            </div>
+        </div>
+        <div id="transaction-section">
+            <h2>Transactions</h2>
+            <button onclick="addTransaction()">Add Transaction</button>
+            <button onclick="removeTransaction()">Remove Transaction</button>
+            <ul id="transactions-list"></ul>
+        </div>
     </div>
     <script src="main.js"></script>
 </body>

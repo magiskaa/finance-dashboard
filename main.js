@@ -6,7 +6,6 @@ function fetchTotal() {
         });
     fetchCash();
     fetchCrypto();
-    updateBalance();
 }
 
 function fetchCash() {
@@ -27,7 +26,7 @@ function fetchCrypto() {
 }
 
 function updateBalance() {
-    pass
+    changeCash(0);
 }
 
 function renderIncomingCashList(incomingCash) {
@@ -69,7 +68,10 @@ function changeCash(amount) {
     .then(response => response.json())
     .then(data => {
         document.getElementById('cash-amount').innerText = data.cash.toFixed(2) + '€';
+        document.getElementById('crypto-amount').innerText = data.crypto.toFixed(2) + '€';
         document.getElementById('total-amount').innerText = data.total.toFixed(2) + '€';
+        document.getElementById('spending-limit').innerText = data.spending_limit + '€ per day';
+        renderIncomingCashList(data.incoming_cash || []);
     });
 }
 
@@ -84,18 +86,19 @@ function resetBalance() {
         document.getElementById('total-amount').innerText = data.total.toFixed(2) + '€';
         document.getElementById('cash-amount').innerText = data.cash.toFixed(2) + '€';
         document.getElementById('spending-limit').innerText = 'Loading...';
-        renderIncomingCashList(data.incoming_cash || []);
     });
 } 
 
 function addIncomingCash() {
     const amount = parseFloat(document.getElementById('incoming-amount').value)
     const date = document.getElementById('incoming-date').value
+    const [year, month, day] = date.split('-');
+    const formatted = `${day}.${month}.${year}`;
     if (!isNaN(amount) && date) {
         fetch('http://localhost:5000/incoming_cash', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: amount, date: date })
+            body: JSON.stringify({ amount: amount, date: formatted })
         })
         .then(response => response.json())
         .then(data => {
@@ -116,7 +119,15 @@ function calculateSpendingLimit() {
         const daysLeft = Math.ceil((endDate - today) / msPerDay) + 1;
         if (daysLeft > 0) {
             const spendingLimit = (limit / daysLeft).toFixed(2);
-            document.getElementById('spending-limit').innerText = `${spendingLimit}€ per day`;
+            fetch('http://localhost:5000/spending_limit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ limit: spendingLimit })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('spending-limit').innerText = `${spendingLimit}€ per day`;
+            });
         } else {
             document.getElementById('spending-limit').innerText = 'Limit date has passed.';
         }
@@ -125,4 +136,4 @@ function calculateSpendingLimit() {
 
 document.getElementById('limit-date').addEventListener('change', calculateSpendingLimit);
 
-window.onload = fetchTotal;
+window.onload = updateBalance;
