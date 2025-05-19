@@ -53,6 +53,12 @@ button:hover {
     background: #217dbb;
 }
 
+.amount {
+    font-weight: bold;
+    color: #27ae60;
+    font-size: 1.2em;
+}
+
 #main-container {
     display: flex;
     gap: 2rem;
@@ -78,12 +84,6 @@ button:hover {
     text-align: center;
 }
 
-#total-amount, #cash-amount, #crypto-amount, #spending-limit {
-    font-weight: bold;
-    color: #27ae60;
-    font-size: 1.2em;
-}
-
 #incoming-cash-list {
     font-weight: bold;
     font-size: 1.1em;
@@ -91,6 +91,16 @@ button:hover {
     padding: 0;
     margin-bottom: 40px;
     text-align: center;
+}
+
+#transactions-list {
+    font-weight: bold;
+    font-size: 1.35em;
+    padding: 0;
+    margin-bottom: 40px;
+    margin-top: 40px;
+    margin-left: 20px;
+    text-align: left;
 }
 
 #response {

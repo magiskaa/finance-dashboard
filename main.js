@@ -72,6 +72,7 @@ function changeCash(amount) {
         document.getElementById('total-amount').innerText = data.total.toFixed(2) + '€';
         document.getElementById('spending-limit').innerText = data.spending_limit + '€ per day';
         renderIncomingCashList(data.incoming_cash || []);
+        renderTransactionList(data.transactions || []);
     });
 }
 
@@ -132,6 +133,39 @@ function calculateSpendingLimit() {
             document.getElementById('spending-limit').innerText = 'Limit date has passed.';
         }
     }
+}
+
+function renderTransactionList(transactions) {
+    const list = document.getElementById('transactions-list');
+    list.innerHTML = ''; 
+    if (transactions.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'No transactions.';
+        list.appendChild(li);
+        return;
+    }
+    transactions.forEach(entry => {
+        const li = document.createElement('li');
+        li.innerHTML = `${entry.date}  -  <span class='amount'>${entry.amount.toFixed(2)}€</span>  -  ${entry.text}`;
+        list.appendChild(li);
+    });
+}
+
+function addTransaction() {
+    const amount = parseFloat(document.getElementById('transaction-amount').value)
+    const text = document.getElementById('transaction-text').value
+    fetch('http://localhost:5000/transactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: amount, text: text })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('transaction-amount').value = ''
+        document.getElementById('transaction-text').value = ''
+        renderTransactionList(data.transactions || []);
+    });
+    updateBalance();
 }
 
 document.getElementById('limit-date').addEventListener('change', calculateSpendingLimit);

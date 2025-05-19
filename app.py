@@ -15,6 +15,7 @@ cash_balance = 0
 incoming_cash = []
 spending_limit = 0
 crypto_total = 0
+transactions = []
 
 bybit_client = HTTP(testnet=False, api_key=API, api_secret=API_SECRET)
 
@@ -23,13 +24,14 @@ mexc_client = futures.HTTP(api_key=API_MEXC, api_secret=API_SECRET_MEXC)
 binance_client = UMFutures(API_BINANCE, API_SECRET_BINANCE)
 
 def save_data():
-    global cash_balance, incoming_cash, spending_limit, crypto_total
+    global cash_balance, incoming_cash, spending_limit, crypto_total, transactions
     with open('data/data.json', 'w') as f:
         json.dump({
             'cash_balance': cash_balance,
             'incoming_cash': incoming_cash,
             'spending_limit': spending_limit,
-            'crypto_total': crypto_total
+            'crypto_total': crypto_total,
+            'transactions': transactions
         }, f, ensure_ascii=False, indent=4)
 
 def load_data():
@@ -67,7 +69,7 @@ def crypto():
 
 @app.route('/cash', methods=['POST'])
 def update_cash():
-    global cash_balance, crypto_total, incoming_cash, spending_limit
+    global cash_balance, crypto_total, incoming_cash, spending_limit, transactions
     data = request.get_json()
     amount = data.get('amount', 0)
     cash_balance += amount
@@ -88,7 +90,7 @@ def update_cash():
             crypto_total += float(i['balance'])
     
     save_data()    
-    return jsonify(cash=cash_balance, crypto=crypto_total, total=cash_balance + crypto_total, incoming_cash=incoming_cash, spending_limit=spending_limit)
+    return jsonify(cash=cash_balance, crypto=crypto_total, total=cash_balance + crypto_total, incoming_cash=incoming_cash, spending_limit=spending_limit, transactions=transactions)
 
 @app.route('/reset', methods=['POST'])
 def reset_cash():
@@ -120,6 +122,27 @@ def set_spending_limit():
     save_data()
     return jsonify(spending_limit=spending_limit)
 
+@app.route('/transactions', methods=['POST'])
+def add_transaction():
+    global cash_balance, transactions
+    data = request.get_json()
+    tx_amount = data.get('amount', 0)
+    tx_date = date.today().strftime('%d.%m.%Y')
+    tx_text = data.get('text', '')
+
+    cash_balance -= tx_amount
+    if cash_balance < 0:
+        return jsonify(error="Insufficient funds"), 400
+    
+    transactions.insert(0, {
+        'amount': tx_amount,
+        'date': tx_date,
+        'text': tx_text
+    })
+    
+    save_data()
+    return jsonify(tx_amount=tx_amount, tx_date=tx_date, tx_text=tx_text, transactions=transactions, cash=cash_balance)
+
 
 if __name__ == '__main__':
     data = load_data()
@@ -128,10 +151,12 @@ if __name__ == '__main__':
         incoming_cash = data["incoming_cash"]
         spending_limit = data["spending_limit"]
         crypto_total = data["crypto_total"]
+        transactions = data["transactions"]
     else:
         cash_balance = 0
         incoming_cash = []
         spending_limit = 0
         crypto_total = 0
+        transactions = []
 
     app.run(host='0.0.0.0', port=5000)
