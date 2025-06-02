@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from datetime import date
 from pybit.unified_trading import HTTP
@@ -38,6 +38,10 @@ def load_data():
     if os.path.exists('data/data.json'):
         with open('data/data.json', 'r') as f:
             return json.load(f)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/total', methods=['GET'])
 def total():
