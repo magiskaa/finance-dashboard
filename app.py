@@ -38,6 +38,22 @@ def load_data():
     if os.path.exists('data/data.json'):
         with open('data/data.json', 'r') as f:
             return json.load(f)
+    else:
+        return None
+
+data = load_data()
+if data:
+    cash_balance = data["cash_balance"]
+    incoming_cash = data["incoming_cash"]
+    spending_limit = data["spending_limit"]
+    crypto_total = data["crypto_total"]
+    transactions = data["transactions"]
+else:
+    cash_balance = 0
+    incoming_cash = []
+    spending_limit = 0
+    crypto_total = 0
+    transactions = []
 
 @app.route('/')
 def index():
@@ -52,6 +68,7 @@ def total():
 
 @app.route('/cash', methods=['GET'])
 def cash():
+    global cash_balance, incoming_cash, spending_limit
     save_data()
     return jsonify(
         cash=cash_balance,
@@ -156,18 +173,4 @@ def add_transaction():
 
 
 if __name__ == '__main__':
-    data = load_data()
-    if data:
-        cash_balance = data["cash_balance"]
-        incoming_cash = data["incoming_cash"]
-        spending_limit = data["spending_limit"]
-        crypto_total = data["crypto_total"]
-        transactions = data["transactions"]
-    else:
-        cash_balance = 0
-        incoming_cash = []
-        spending_limit = 0
-        crypto_total = 0
-        transactions = []
-
     app.run(host='0.0.0.0', port=5000)
