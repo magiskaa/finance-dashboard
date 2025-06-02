@@ -64,6 +64,10 @@ def crypto():
     for i in balance:
         if i['asset'] == 'BNFCR':
             crypto_total += float(i['balance'])
+    
+    eur_usd = float(bybit_client.get_tickers(category='spot', symbol='USDTEUR')["result"]["list"][0]["lastPrice"])
+    crypto_total = round(crypto_total * eur_usd, 2)
+
     save_data()
     return jsonify(crypto=crypto_total)
 
@@ -88,7 +92,10 @@ def update_cash():
     for i in balance:
         if i['asset'] == 'BNFCR':
             crypto_total += float(i['balance'])
-    
+
+    eur_usd = float(bybit_client.get_tickers(category='spot', symbol='USDTEUR')["result"]["list"][0]["lastPrice"])
+    crypto_total = round(crypto_total * eur_usd, 2)
+
     save_data()    
     return jsonify(cash=cash_balance, crypto=crypto_total, total=cash_balance + crypto_total, incoming_cash=incoming_cash, spending_limit=spending_limit, transactions=transactions)
 
