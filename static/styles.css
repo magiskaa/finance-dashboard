@@ -1,6 +1,6 @@
 body {
-    font-family: Helvetica, sans-serif;
-    background: #f5f7fa;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #222;
     margin: 0;
     padding: 0;
@@ -10,6 +10,8 @@ h1 {
     text-align: center;
     margin-top: 30px;
     color: #2c3e50;
+    letter-spacing: 2px;
+    font-size: 2.5em;
 }
 
 h2 {
@@ -28,29 +30,39 @@ p {
     color: #34495e;
 }
 
-input {
-    width: 120px;
-    padding: 8px;
-    margin: 10px 5px 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+input, button {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
     font-size: 1em;
+}
+
+input {
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    transition: border 0.2s;
+}
+
+input:focus {
+    border: 1.5px solid #8e44ad;
+    outline: none;
 }
 
 button {
-    padding: 8px 18px;
-    margin: 5px 2px;
-    background: #000000;
+    background: linear-gradient(90deg, #8e44ad 60%, #2980b9 100%);
     color: #fff;
     border: none;
-    border-radius: 4px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background 0.2s;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+    transition: background 0.2s, transform 0.1s;
 }
 
 button:hover {
-    background: #217dbb;
+    background: linear-gradient(90deg, #2980b9 60%, #8e44ad 100%);
+    transform: translateY(-2px) scale(1.03);
 }
 
 .amount {
@@ -64,47 +76,86 @@ button:hover {
     gap: 2rem;
     align-items: flex-start;
     margin: 40px auto;
-    text-align: center;
-    max-width: 1000px;
+    max-width: 1100px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 #left-column {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    gap: 1.5rem;
+    min-width: 320px;
+    flex: 1 1 350px;
 }
 
 #balance-section, #management-section, #transaction-section {
     background: #fff;
-    width: 400px;
-    margin: 40px auto;
-    padding: 30px 25px 5px 25px;
-    border-radius: 10px;
-    box-shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
+    min-width: 280px;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 30px 25px 20px 25px;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(44, 62, 80, 0.10);
     text-align: center;
+    transition: box-shadow 0.2s;
 }
 
-#incoming-cash-list {
+#balance-section:hover, #management-section:hover, #transaction-section:hover {
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
+}
+
+#incoming-cash-list, #transactions-list {
     font-weight: bold;
     font-size: 1.1em;
     list-style-type: none;
     padding: 0;
-    margin-bottom: 40px;
-    text-align: center;
+    margin-bottom: 30px;
+    text-align: left;
 }
 
 #transactions-list {
-    font-weight: bold;
-    font-size: 1.35em;
-    padding: 0;
-    margin-bottom: 40px;
-    margin-top: 40px;
-    margin-left: 20px;
-    text-align: left;
+    font-size: 1.2em;
+    margin-top: 30px;
+    margin-left: 0;
 }
 
 #response {
     margin-top: 20px;
     color: #8e44ad;
     font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    #main-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        max-width: 98vw;
+    }
+    #left-column, #transaction-section {
+        max-width: 98vw;
+        min-width: unset;
+    }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5em;
+    }
+    #main-container {
+        margin: 10px auto;
+        padding: 0 2vw;
+    }
+    #balance-section, #management-section, #transaction-section {
+        padding: 18px 8px 10px 8px;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+    input, button {
+        font-size: 1em;
+        padding: 10px;
+    }
 }
