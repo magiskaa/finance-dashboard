@@ -1,5 +1,5 @@
 function fetchTotal() {
-    fetch('http://localhost:5000/total')
+    fetch('/total')
         .then(response => response.json())
         .then(data => {
             document.getElementById('total-amount').innerText = data.total.toFixed(2) + '€';
@@ -9,7 +9,7 @@ function fetchTotal() {
 }
 
 function fetchCash() {
-    fetch('http://localhost:5000/cash')
+    fetch('/cash')
         .then(response => response.json())
         .then(data => {
             document.getElementById('cash-amount').innerText = data.cash.toFixed(2) + '€';
@@ -18,7 +18,7 @@ function fetchCash() {
 }
 
 function fetchCrypto() {
-    fetch('http://localhost:5000/crypto')
+    fetch('/crypto')
         .then(response => response.json())
         .then(data => {
             document.getElementById('crypto-amount').innerText = data.crypto.toFixed(2) + '€';
@@ -60,7 +60,7 @@ function removeCash() {
 }
 
 function changeCash(amount) {
-    fetch('http://localhost:5000/cash', {
+    fetch('/cash', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: amount })
@@ -77,7 +77,7 @@ function changeCash(amount) {
 }
 
 function resetBalance() {
-    fetch('http://localhost:5000/reset', {
+    fetch('/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reset: true })
@@ -96,7 +96,7 @@ function addIncomingCash() {
     const [year, month, day] = date.split('-');
     const formatted = `${day}.${month}.${year}`;
     if (!isNaN(amount) && date) {
-        fetch('http://localhost:5000/incoming_cash', {
+        fetch('/incoming_cash', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ amount: amount, date: formatted })
@@ -120,7 +120,7 @@ function calculateSpendingLimit() {
         const daysLeft = Math.ceil((endDate - today) / msPerDay) + 1;
         if (daysLeft > 0) {
             const spendingLimit = (limit / daysLeft).toFixed(2);
-            fetch('http://localhost:5000/spending_limit', {
+            fetch('/spending_limit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ limit: spendingLimit })
@@ -154,7 +154,7 @@ function renderTransactionList(transactions) {
 function addTransaction() {
     const amount = parseFloat(document.getElementById('transaction-amount').value)
     const text = document.getElementById('transaction-text').value
-    fetch('http://localhost:5000/transactions', {
+    fetch('/transactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: amount, text: text })
