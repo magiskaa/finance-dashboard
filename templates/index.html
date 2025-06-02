@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Finance Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <h1>Finance Dashboard</h1>
@@ -44,6 +44,6 @@
             <ul id="transactions-list"></ul>
         </div>
     </div>
-    <script src="main.js"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 </html>
