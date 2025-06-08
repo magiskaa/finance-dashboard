@@ -46,14 +46,16 @@ function renderIncomingCashList(incomingCash) {
 }
 
 function addCash() {
-    const amount = parseFloat(document.getElementById('amount-input').value)
+    const amountInput = parseFloat(document.getElementById('amount-input').value.replace(',', '.'))
+    const amount = parseFloat(amountInput);
     if (!isNaN(amount)) {
         changeCash(amount);
     }
 }
 
 function removeCash() {
-    const amount = parseFloat(document.getElementById('amount-input').value)
+    const amountInput = parseFloat(document.getElementById('amount-input').value.replace(',', '.'))
+    const amount = parseFloat(amountInput);
     if (!isNaN(amount)) {
         changeCash(-amount);
     }
@@ -91,23 +93,26 @@ function resetBalance() {
 } 
 
 function addIncomingCash() {
-    const amount = parseFloat(document.getElementById('incoming-amount').value)
+    const amountInput = parseFloat(document.getElementById('incoming-amount').value.replace(',', '.'))
+    const amount = parseFloat(amountInput);
     const date = document.getElementById('incoming-date').value
     const [year, month, day] = date.split('-');
     const formatted = `${day}.${month}.${year}`;
-    if (!isNaN(amount) && date) {
-        fetch('/incoming_cash', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: amount, date: formatted })
-        })
-        .then(response => response.json())
-        .then(data => {
-            fetchCash();
-            document.getElementById('incoming-amount').value = ''
-            document.getElementById('incoming-date').value = ''
-        });
+    if (isNaN(amount) || !date) {
+        alert('Please fill in all fields correctly.');
+        return;
     }
+    fetch('/incoming_cash', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: amount, date: formatted })
+    })
+    .then(response => response.json())
+    .then(data => {
+        fetchCash();
+        document.getElementById('incoming-amount').value = ''
+        document.getElementById('incoming-date').value = ''
+    });
 }
 
 function calculateSpendingLimit() {
@@ -152,17 +157,26 @@ function renderTransactionList(transactions) {
 }
 
 function addTransaction() {
-    const amount = parseFloat(document.getElementById('transaction-amount').value)
+    const amountInput = parseFloat(document.getElementById('transaction-amount').value.replace(',', '.'))
+    const amount = parseFloat(amountInput);
     const text = document.getElementById('transaction-text').value
+    const date = document.getElementById('transaction-date').value
+    if (isNaN(amount) || !text || !date) {
+        alert('Please fill in all fields correctly.');
+        return;
+    }
+    const [year, month, day] = date.split('-');
+    const formatted = `${day}.${month}.${year}`;
     fetch('/transactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: amount, text: text })
+        body: JSON.stringify({ amount: amount, text: text, date: formatted })
     })
     .then(response => response.json())
     .then(data => {
         document.getElementById('transaction-amount').value = ''
         document.getElementById('transaction-text').value = ''
+        document.getElementById('transaction-date').value = ''
         renderTransactionList(data.transactions || []);
     });
     updateBalance();

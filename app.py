@@ -157,8 +157,8 @@ def add_transaction():
     data = load_data()
     data_js = request.get_json()
     tx_amount = data_js.get('amount', 0)
-    tx_date = date.today().strftime('%d.%m.%Y')
     tx_text = data_js.get('text', '')
+    tx_date = data_js.get('date', date.today().strftime('%d.%m.%Y'))
 
     data["cash_balance"] -= tx_amount
     if data["cash_balance"] < 0:
