@@ -34,6 +34,7 @@ def load_data():
             return json.load(f)
     else:
         return {
+            'total_cash': 0,
             'cash_balance': 0,
             'incoming_cash': [],
             'spending_limit': 0,

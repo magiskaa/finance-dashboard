@@ -1,11 +1,11 @@
 function fetchTotal() {
+    fetchCash();
+    fetchCrypto();
     fetch('/total')
         .then(response => response.json())
         .then(data => {
             document.getElementById('total-amount').innerText = data.total.toFixed(2) + '€';
         });
-    fetchCash();
-    fetchCrypto();
 }
 
 function fetchCash() {
@@ -178,8 +178,9 @@ function addTransaction() {
         document.getElementById('transaction-text').value = ''
         document.getElementById('transaction-date').value = ''
         renderTransactionList(data.transactions || []);
+        document.getElementById('cash-amount').innerText = data.cash.toFixed(2) + '€';
+        fetchTotal();
     });
-    updateBalance();
 }
 
 document.getElementById('limit-date').addEventListener('change', calculateSpendingLimit);
