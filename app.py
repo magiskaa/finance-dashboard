@@ -2,9 +2,9 @@ import os
 import json
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
-from datetime import date
+from datetime import date, datetime
 from pybit.unified_trading import HTTP
-from pymexc import futures
+from pymexc import futures, spot
 from binance.um_futures import UMFutures
 from data.config import API, API_SECRET, API_MEXC, API_SECRET_MEXC, API_BINANCE, API_SECRET_BINANCE
 
@@ -21,6 +21,7 @@ transactions = []
 bybit_client = HTTP(testnet=False, api_key=API, api_secret=API_SECRET)
 
 mexc_client = futures.HTTP(api_key=API_MEXC, api_secret=API_SECRET_MEXC)
+mexc_spot_client = spot.HTTP(api_key=API_MEXC, api_secret=API_SECRET_MEXC)
 
 binance_client = UMFutures(API_BINANCE, API_SECRET_BINANCE)
 
@@ -84,12 +85,19 @@ def crypto():
     data = load_data()
     data["crypto_total"] = float(bybit_client.get_wallet_balance(accountType='UNIFIED', currency='USDT')['result']['list'][0]['totalEquity'])
     data["crypto_total"] += float(mexc_client.asset(currency='USDT')['data']['equity'])
+    mexc_spot = mexc_spot_client.account_information()
+    mexc_balances = mexc_spot["balances"]
+    for i in mexc_balances:
+        asset_balance = float(i["free"])
+        asset_price = float(mexc_spot_client.ticker_price(symbol="RSRUSDT")["price"])
+        data["crypto_total"] += asset_price * asset_balance
+
     balance = binance_client.balance()
     for i in balance:
-        if i['asset'] == 'BNFCR':
-            data["crypto_total"] += float(i['balance'])
+        if i["asset"] == "BNFCR":
+            data["crypto_total"] += float(i["balance"])
     
-    eur_usd = float(bybit_client.get_tickers(category='spot', symbol='USDTEUR')["result"]["list"][0]["lastPrice"])
+    eur_usd = float(bybit_client.get_tickers(category="spot", symbol="USDTEUR")["result"]["list"][0]["lastPrice"])
     data["crypto_total"] = round(data["crypto_total"] * eur_usd, 2)
 
     save_data(data)
@@ -112,6 +120,13 @@ def update_cash():
     
     data["crypto_total"] = float(bybit_client.get_wallet_balance(accountType='UNIFIED', currency='USDT')['result']['list'][0]['totalEquity'])
     data["crypto_total"] += float(mexc_client.asset(currency='USDT')['data']['equity'])
+    mexc_spot = mexc_spot_client.account_information()
+    mexc_balances = mexc_spot["balances"]
+    for i in mexc_balances:
+        asset_balance = float(i["free"])
+        asset_price = float(mexc_spot_client.ticker_price(symbol="RSRUSDT")["price"])
+        data["crypto_total"] += asset_price * asset_balance
+
     balance = binance_client.balance()
     for i in balance:
         if i['asset'] == 'BNFCR':
